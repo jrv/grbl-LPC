@@ -23,22 +23,22 @@
 #include "LPC17xx.h"
 #include <atomic>
 
-static const uint32_t leds = (1 << 21) | (1 << 20) | (1 << 19) | (1 << 18);
+static const uint32_t leds = (1 << 18) | (1 << 20) | (1 << 21) | (1 << 23);
 
 inline void debug_init()
 {
     LPC_GPIO1->FIODIR = leds;
-    LPC_GPIO1->FIOPIN = 0;
+    //LPC_GPIO1->FIOPIN = 0;
 }
 
 inline void debug_enter()
 {
-    LPC_GPIO1->FIOPIN = (LPC_GPIO1->FIOPIN | (1 << 21)) ^ (1 << 20);
+    LPC_GPIO1->FIOPIN = (LPC_GPIO1->FIOPIN | (1 << 18)) ^ (1 << 20);
 }
 
 inline void debug_exit()
 {
-    LPC_GPIO1->FIOPIN &= ~(1 << 21);
+    LPC_GPIO1->FIOPIN &= ~(1 << 18);
 }
 
 inline void xdebug_enter() {}

@@ -32,11 +32,12 @@
 
 
 // Define board type for pin map and default settings.
-#define CPU_MAP_SMOOTHIEBOARD   // Smoothieboard (NXP LPC1769 MCU)
+//#define CPU_MAP_SMOOTHIEBOARD   // Smoothieboard (NXP LPC1769 MCU)
 //#define CPU_MAP_C3D_REMIX       // Cohesion3D Remix (NXP LPC1769 MCU)
 //#define CPU_MAP_C3D_MINI        // Cohesion3D Mini (NXP LPC1769 MCU)
 //#define CPU_MAP_MKS_SBASE       // MKS SBASE Board (NXP LPC1768 MCU)
 //#define CPU_MAP_AZTEEG_X5       // Azteeg X5 Board (NXP LPC1769 MCU)
+#define CPU_MAP_LAOSBOARD       // LaosLaser with MBED (NXP LPC1768 MCU)
 
 // Force Spincle PWM Pin 2.4 (default is P2.5)
 //#define SPINDLE_PWM_PIN_2_4
