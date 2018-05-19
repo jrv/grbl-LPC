@@ -21,7 +21,9 @@
 
 #include "grbl.h"
 
+#ifndef CPU_MAP_LAOSBOARD
 #define USE_USB
+#endif
 
 #ifdef USE_USB
 #include "usbSerial.h"

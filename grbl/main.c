@@ -40,6 +40,10 @@ volatile uint8_t sys_rt_exec_accessory_override; // Global realtime executor bit
 
 int main(void)
 {
+  #ifdef CPU_MAP_LAOSBOARD
+  SystemInit();
+  #endif
+
   // Initialize system upon power-up.
   debug_init();    // Initialize debug leds
   isr_init();      // Set ISR priorities
