@@ -1,9 +1,8 @@
-/****************************************************************************//**
- * @file :    startup_LPC17xx.c
- * @brief : CMSIS Cortex-M3 Core Device Startup File
- * @version : V1.01
- * @date :    4. Feb. 2009
- *
+/******************************************************************************
+ * @file:
+ * @purpose: CMSIS Cortex-M3 Core Device Startup File
+ * @version: V1.01
+ * @date:    4. Feb. 2009
  *----------------------------------------------------------------------------
  *
  * Copyright (C) 2009 ARM Limited. All rights reserved.
@@ -20,9 +19,9 @@
  *
  ******************************************************************************/
 
-// Mod by nio for the .fastcode part
-
 #include "LPC17xx.h"
+
+
 
 #define WEAK __attribute__ ((weak))
 //*****************************************************************************
@@ -81,17 +80,13 @@ void WEAK      	PLL1_IRQHandler(void);           /* PLL1 (USB PLL) */
 
 /* Exported types --------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-extern unsigned long _etext;
-extern unsigned long _sidata;		/* start address for the initialization values of the .data section. defined in linker script */
-extern unsigned long _sdata;		/* start address for the .data section. defined in linker script */
-extern unsigned long _edata;		/* end address for the .data section. defined in linker script */
+extern unsigned long __etext;
+extern unsigned long __sidata;		/* start address for the initialization values of the .data section. defined in linker script */
+extern unsigned long __data_start__;		/* start address for the .data section. defined in linker script */
+extern unsigned long __data_end__;		/* end address for the .data section. defined in linker script */
 
-extern unsigned long _sifastcode;		/* start address for the initialization values of the .fastcode section. defined in linker script */
-extern unsigned long _sfastcode;		/* start address for the .fastcode section. defined in linker script */
-extern unsigned long _efastcode;		/* end address for the .fastcode section. defined in linker script */
-
-extern unsigned long _sbss;			/* start address for the .bss section. defined in linker script */
-extern unsigned long _ebss;			/* end address for the .bss section. defined in linker script */
+extern unsigned long __bss_start__;			/* start address for the .bss section. defined in linker script */
+extern unsigned long __bss_end__;			/* end address for the .bss section. defined in linker script */
 
 extern void _estack;		/* init value for the stack pointer. defined in linker script */
 
@@ -101,7 +96,7 @@ extern void _estack;		/* init value for the stack pointer. defined in linker scr
 /* function prototypes ------------------------------------------------------*/
 void Reset_Handler(void) __attribute__((__interrupt__));
 extern int main(void);
-
+extern void _CPUregTestPOST (void);
 
 /******************************************************************************
 *
@@ -184,38 +179,54 @@ void (* const g_pfnVectors[])(void) =
 *******************************************************************************/
 void Reset_Handler(void)
 {
-	SystemInit();
+    unsigned long *pulSrc, *pulDest;
 
-    unsigned long *pulDest;
-    unsigned long *pulSrc;
+    /*
+     * This used for cleaning AHBRAM0 section
+     */
+#if 0
+    for (pulDest = ((unsigned long *)AHBRAM0_BASE); \
+					pulDest < ((unsigned long *)(AHBRAM0_BASE + AHBRAM0_SIZE)); \
+					pulDest++){
+    	*(pulDest++) = 0;
+    }
+#endif
+
+    /*
+     * This used for cleaning AHBRAM1 section
+     */
+#if 0
+    for (pulDest = ((unsigned long *)AHBRAM1_BASE); \
+					pulDest < ((unsigned long *)(AHBRAM1_BASE + AHBRAM1_SIZE)); \
+					pulDest++){
+    	*(pulDest++) = 0;
+    }
+#endif
 
     //
     // Copy the data segment initializers from flash to SRAM in ROM mode
     //
-
-    if (&_sidata != &_sdata) {	// only if needed
-		pulSrc = &_sidata;
-		for(pulDest = &_sdata; pulDest < &_edata; ) {
-			*(pulDest++) = *(pulSrc++);
-		}
+#if (__RAM_MODE__==0)
+    pulSrc = &__sidata;
+    for(pulDest = &__data_start__; pulDest < &__data_end__; )
+    {
+        *(pulDest++) = *(pulSrc++);
     }
+#endif
 
-    // Copy the .fastcode code from ROM to SRAM
-
-    if (&_sifastcode != &_sfastcode) {	// only if needed
-    	pulSrc = &_sifastcode;
-		for(pulDest = &_sfastcode; pulDest < &_efastcode; ) {
-			*(pulDest++) = *(pulSrc++);
-		}
-    }
 
     //
     // Zero fill the bss segment.
     //
-    for(pulDest = &_sbss; pulDest < &_ebss; )
+    for(pulDest = &__bss_start__; pulDest < &__bss_end__; )
     {
         *(pulDest++) = 0;
     }
+
+    //
+    //  Call IEC60335 CPU register tests POST
+    //
+//    __ASM volatile ("bl _CPUregTestPOST \t\n");
 
     //
     // Call the application's entry point.

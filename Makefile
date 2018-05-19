@@ -143,6 +143,12 @@ build/src/%.o : %.cpp
 .PHONY: default
 default: build/grbl.hex build/firmware.bin
 
+.PHONY: mbed
+mbed: build/mbed.bin
+
+build/mbed.elf: $(SRC_OBJECTS) $(CMSIS_OBJECTS) lpc17xx/mbed1768.ld
+	$(LD) -mcpu=cortex-m3 -mthumb -specs=nosys.specs -T$(filter %.ld, $^) -o $@ $(filter %.o, $^) $(LIBS)
+
 build/grbl.elf: $(SRC_OBJECTS) $(CMSIS_OBJECTS) lpc17xx/grbl.ld
 	$(LD) -mcpu=cortex-m3 -mthumb -specs=nosys.specs -T$(filter %.ld, $^) -o $@ $(filter %.o, $^) $(LIBS)
 

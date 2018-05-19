@@ -4,7 +4,11 @@
 Old releases are in the `Release` tab. See [cprezzi's branch](https://github.com/cprezzi/grbl-LPC) for more recent releases.
 Note: cprezzi's branch disables current control and has defaults more suitable for other boards.
 ***
-This is GRBL 1.1 ported to the LPC1769. It can run on Smoothieboard. Set grbl/config.h to CPU_MAP_LAOSBOARD for LaosLaser board with MBED 1768.
+This is GRBL 1.1 ported to the LPC1769. It can run on Smoothieboard. 
+
+In this version, grbl/config.h is set to CPU_MAP_LAOSBOARD for LaosLaser board with MBED 1768. Use ```make mbed``` to compile it. 
+
+TODO: the Linker file ```mbed1768.ld``` is not compatible with ```startup_LPC17xx.c```. To solve this, the original version of ```startup_LPC17xx.c``` has been renamed to ```startup_LPC17xx.c.orig```. These two should be integrated before this code can be ported back into the main grbl-LPC.
 
 Usage notes:
 * This uses a different usb-serial driver than Smoothieware. Windows 10 should recognize it automatically.
